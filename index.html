@@ -24,9 +24,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;ove
 .legend-dot{width:9px;height:9px;border-radius:2px}
 .gantt-wrap{display:flex;min-width:100%}
 .labels{min-width:280px;max-width:280px;flex-shrink:0;position:sticky;left:0;z-index:50;background:var(--bg);border-right:1px solid var(--border)}
-.label-hdr{height:52px;display:flex;align-items:flex-end;padding:0 14px 7px;font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:82px;z-index:60}
+.label-hdr{height:52px;display:flex;align-items:flex-end;padding:0 14px 7px;font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:105px;z-index:60}
 .chart{flex:1;overflow-x:auto}
-.timeline-hdr{display:flex;height:52px;border-bottom:1px solid var(--border);position:sticky;top:82px;z-index:40;background:var(--bg)}
+.timeline-hdr{display:flex;height:52px;border-bottom:1px solid var(--border);position:sticky;top:105px;z-index:40;background:var(--bg)}
 .month-grp{display:flex;flex-direction:column}
 .month-lbl{font-size:10px;font-weight:600;color:var(--text-muted);padding:5px 0 2px 7px;text-transform:uppercase;letter-spacing:.5px;height:22px}
 .week-lbls{display:flex;height:30px}
@@ -54,7 +54,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;ove
 <body>
 <div class="header">
   <h1>SparkOS Summer Release — Master Gantt</h1>
-  <div class="sub">April 10 → July 17, 2026 &nbsp;·&nbsp; 7 Agents + 3 Conductors (in SparkOS) &nbsp;·&nbsp; 5 Gates &nbsp;·&nbsp; Today: Apr 10</div>
+  <div class="sub">April 10 → July 17, 2026 &nbsp;·&nbsp; 7 Agents + 3 Conductors (in SparkOS) &nbsp;·&nbsp; 5 Milestones &nbsp;·&nbsp; Today: Apr 10</div>
   <div class="legend">
     <div class="legend-item"><div class="legend-dot" style="background:var(--accent-platform)"></div>Platform</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--accent-agent)"></div>Agents (Standalone)</div>
@@ -83,7 +83,7 @@ function fmt(dt){return(dt.getMonth()+1)+'/'+dt.getDate()}
 
 const data=[
   {type:'group',label:'SPARKOS PLATFORM'},
-  {label:'Agent Contract v1',start:'2026-04-07',end:'2026-04-25',color:'--accent-platform',note:'Hannah. GATE 1 deliverable.',owner:'Hannah'},
+  {label:'Agent Contract v1',start:'2026-04-07',end:'2026-04-25',color:'--accent-platform',note:'Hannah. MS1 deliverable.',owner:'Hannah'},
   {label:'Engagement Layer (continued)',start:'2026-03-23',end:'2026-05-15',color:'--accent-platform',note:'Angie\u2019s Agent Platform pod. MVP done, extending for multi-channel.',owner:'Angie pod'},
   {label:'Context Engine + State Aggregation',start:'2026-04-07',end:'2026-05-15',color:'--accent-platform',note:'Patient/workflow context for decision-making.',owner:'Sergei'},
   {label:'Agent Invocation & Execution',start:'2026-04-14',end:'2026-05-22',color:'--accent-platform',note:'Sync/async agent invocation.',owner:'SparkOS eng'},
@@ -138,12 +138,12 @@ const data=[
   {label:'Migration Tooling',start:'2026-06-15',end:'2026-07-10',color:'--accent-gtm',note:'Scripts, comms, rollback.',owner:'Hannah'},
   {label:'GA Launch Prep & QA',start:'2026-07-06',end:'2026-07-17',color:'--accent-gtm',note:'Final QA, load testing.',owner:'Hannah + EM'},
 
-  {type:'group',label:'GATES & MILESTONES'},
-  {type:'ms',label:'Gate 1: MVP Live + Contract Lock',date:'2026-04-25',color:'--accent-milestone'},
-  {type:'ms',label:'Gate 2: First Agents Sellable',date:'2026-05-22',color:'--accent-milestone'},
-  {type:'ms',label:'Gate 3: Platform + Credits Ready',date:'2026-06-12',color:'--accent-milestone'},
-  {type:'ms',label:'Gate 4: All Agents Compat + EA',date:'2026-07-03',color:'--accent-milestone'},
-  {type:'ms',label:'🚀 Gate 5: SparkOS GA',date:'2026-07-17',color:'--accent-milestone'},
+  {type:'group',label:'MILESTONES'},
+  {type:'ms',label:'Milestone 1: MVP Live + Contract Lock',date:'2026-04-25',color:'--accent-milestone'},
+  {type:'ms',label:'Milestone 2: First Agents Sellable',date:'2026-05-22',color:'--accent-milestone'},
+  {type:'ms',label:'Milestone 3: Platform + Credits Ready',date:'2026-06-12',color:'--accent-milestone'},
+  {type:'ms',label:'Milestone 4: All Agents Compat + EA',date:'2026-07-03',color:'--accent-milestone'},
+  {type:'ms',label:'🚀 Milestone 5: SparkOS GA',date:'2026-07-17',color:'--accent-milestone'},
 ];
 
 const chartEl=document.getElementById('chart'),labelsEl=document.getElementById('labels');
