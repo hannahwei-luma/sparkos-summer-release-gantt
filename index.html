@@ -24,9 +24,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;ove
 .legend-dot{width:9px;height:9px;border-radius:2px}
 .gantt-wrap{display:flex;min-width:100%}
 .labels{min-width:280px;max-width:280px;flex-shrink:0;position:sticky;left:0;z-index:50;background:var(--bg);border-right:1px solid var(--border)}
-.label-hdr{height:52px;display:flex;align-items:flex-end;padding:0 14px 7px;font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:105px;z-index:60}
+.label-hdr{height:52px;display:flex;align-items:flex-end;padding:0 14px 7px;font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);background:var(--bg);z-index:60}
 .chart{flex:1;overflow-x:auto}
-.timeline-hdr{display:flex;height:52px;border-bottom:1px solid var(--border);position:sticky;top:105px;z-index:40;background:var(--bg)}
+.timeline-hdr{display:flex;height:52px;border-bottom:1px solid var(--border);background:var(--bg);z-index:40}
 .month-grp{display:flex;flex-direction:column}
 .month-lbl{font-size:10px;font-weight:600;color:var(--text-muted);padding:5px 0 2px 7px;text-transform:uppercase;letter-spacing:.5px;height:22px}
 .week-lbls{display:flex;height:30px}
@@ -43,7 +43,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;ove
 .ms-marker{position:absolute;top:5px;width:22px;height:22px;transform:rotate(45deg);border-radius:3px;z-index:5}
 .ms-text{position:absolute;top:9px;font-size:8px;font-weight:600;white-space:nowrap;z-index:6}
 .today-line{position:absolute;top:0;bottom:0;width:2px;background:var(--today);z-index:30;pointer-events:none}
-.today-lbl{position:absolute;top:-18px;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--today);font-weight:600;transform:translateX(-50%);white-space:nowrap}
+.today-lbl{position:absolute;top:4px;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--today);font-weight:600;transform:translateX(-50%);white-space:nowrap;background:var(--bg);padding:0 3px}
 .tooltip{display:none;position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-size:11px;color:var(--text);z-index:200;max-width:260px;box-shadow:0 8px 28px rgba(0,0,0,.4);pointer-events:none}
 .tooltip .tt-t{font-weight:700;margin-bottom:3px}
 .tooltip .tt-d{color:var(--text-muted);font-size:10px;font-family:'JetBrains Mono',monospace}
@@ -179,7 +179,9 @@ data.forEach(item=>{
     chartRows+='</div>';
   } else {
     const s=new Date(item.start+'T00:00:00'),e=new Date(item.end+'T00:00:00');
-    const left=bL(s),width=bW(s,e),cls=item.striped?'bar striped':'bar';
+    let left=bL(s),width=bW(s,e);
+    if(left<0){width+=left;left=0;}
+    const cls=item.striped?'bar striped':'bar';
     chartRows+=`<div class="chart-row" style="width:${TW}px">`;
     weeks.forEach(()=>{chartRows+=`<div class="chart-cell"></div>`});
     const ownerTxt=item.owner?` · ${item.owner}`:'';
