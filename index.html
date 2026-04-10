@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SparkOS Summer Release — Gantt</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0d1117;--surface:#161b22;--surface2:#1c2129;--border:#30363d;
+  --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;
+  --accent-recapture:#f78166;--accent-referral:#79c0ff;--accent-readiness:#a5d6ff;
+  --accent-platform:#7ee787;--accent-billing:#d2a8ff;--accent-agent:#ffa657;
+  --accent-milestone:#f0e68c;--accent-gtm:#ff7b72;--accent-p2:#56d364;
+  --today:#e03c31;--grid-line:rgba(48,54,61,0.6);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:auto;min-height:100vh}
+.header{padding:28px 36px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:100}
+.header h1{font-size:21px;font-weight:700;letter-spacing:-0.5px}
+.header .sub{color:var(--text-muted);font-size:12px;margin-top:3px}
+.legend{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-muted);font-weight:500}
+.legend-dot{width:9px;height:9px;border-radius:2px}
+.gantt-wrap{display:flex;min-width:100%}
+.labels{min-width:280px;max-width:280px;flex-shrink:0;position:sticky;left:0;z-index:50;background:var(--bg);border-right:1px solid var(--border)}
+.label-hdr{height:52px;display:flex;align-items:flex-end;padding:0 14px 7px;font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);background:var(--bg);position:sticky;top:82px;z-index:60}
+.chart{flex:1;overflow-x:auto}
+.timeline-hdr{display:flex;height:52px;border-bottom:1px solid var(--border);position:sticky;top:82px;z-index:40;background:var(--bg)}
+.month-grp{display:flex;flex-direction:column}
+.month-lbl{font-size:10px;font-weight:600;color:var(--text-muted);padding:5px 0 2px 7px;text-transform:uppercase;letter-spacing:.5px;height:22px}
+.week-lbls{display:flex;height:30px}
+.week-cell{width:52px;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--text-dim);display:flex;align-items:center;justify-content:center;border-left:1px solid var(--grid-line)}
+.grp-hdr{height:30px;display:flex;align-items:center;padding:0 14px;font-size:10px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:1px;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.grp-hdr-chart{height:30px;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.row-lbl{height:34px;display:flex;align-items:center;padding:0 14px;font-size:11px;color:var(--text-muted);border-bottom:1px solid rgba(48,54,61,.3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-lbl .tag{font-size:8px;font-family:'JetBrains Mono',monospace;padding:1px 4px;border-radius:3px;margin-left:6px;font-weight:500}
+.chart-row{height:34px;display:flex;position:relative;border-bottom:1px solid rgba(48,54,61,.3)}
+.chart-cell{width:52px;flex-shrink:0;border-left:1px solid var(--grid-line)}
+.bar{position:absolute;height:18px;top:8px;border-radius:3px;font-size:8px;font-weight:600;color:var(--bg);display:flex;align-items:center;padding:0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:default;transition:opacity .15s}
+.bar:hover{opacity:.85;z-index:10}
+.bar.striped{background-image:repeating-linear-gradient(135deg,transparent,transparent 3px,rgba(0,0,0,.12) 3px,rgba(0,0,0,.12) 6px)}
+.ms-marker{position:absolute;top:5px;width:22px;height:22px;transform:rotate(45deg);border-radius:3px;z-index:5}
+.ms-text{position:absolute;top:9px;font-size:8px;font-weight:600;white-space:nowrap;z-index:6}
+.today-line{position:absolute;top:0;bottom:0;width:2px;background:var(--today);z-index:30;pointer-events:none}
+.today-lbl{position:absolute;top:-18px;font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--today);font-weight:600;transform:translateX(-50%);white-space:nowrap}
+.tooltip{display:none;position:fixed;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-size:11px;color:var(--text);z-index:200;max-width:260px;box-shadow:0 8px 28px rgba(0,0,0,.4);pointer-events:none}
+.tooltip .tt-t{font-weight:700;margin-bottom:3px}
+.tooltip .tt-d{color:var(--text-muted);font-size:10px;font-family:'JetBrains Mono',monospace}
+.tooltip .tt-n{color:var(--text-dim);font-size:10px;margin-top:3px}
+.gate-badge{display:inline-block;font-size:8px;font-family:'JetBrains Mono',monospace;background:rgba(240,230,140,.15);color:var(--accent-milestone);padding:1px 5px;border-radius:3px;margin-left:6px}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>SparkOS Summer Release — Master Gantt</h1>
+  <div class="sub">April 10 → July 17, 2026 &nbsp;·&nbsp; 7 Agents + 3 Conductors (in SparkOS) &nbsp;·&nbsp; 5 Gates &nbsp;·&nbsp; Today: Apr 10</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-platform)"></div>Platform</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-agent)"></div>Agents (Standalone)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-p2)"></div>Agents (SparkOS P2)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-recapture)"></div>Job 1</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-referral)"></div>Job 2</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-readiness)"></div>Job 3</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-billing)"></div>Billing</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-gtm)"></div>GTM</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--accent-milestone)"></div>Milestone</div>
+  </div>
+</div>
+<div id="tooltip" class="tooltip"></div>
+<div class="gantt-wrap">
+  <div class="labels" id="labels"></div>
+  <div class="chart" id="chart"></div>
+</div>
+<script>
+const START=new Date(2026,3,6),END=new Date(2026,6,20),CW=52,RH=34,GH=30,TODAY=new Date(2026,3,10);
+const weeks=[];let d=new Date(START);while(d<END){weeks.push(new Date(d));d.setDate(d.getDate()+7)}
+const TW=weeks.length*CW;
+function wi(dt){return(dt.getTime()-START.getTime())/(7*864e5)}
+function bL(dt){return wi(dt)*CW}
+function bW(s,e){return(wi(e)-wi(s))*CW}
+function fmt(dt){return(dt.getMonth()+1)+'/'+dt.getDate()}
+
+const data=[
+  {type:'group',label:'SPARKOS PLATFORM'},
+  {label:'Agent Contract v1',start:'2026-04-07',end:'2026-04-25',color:'--accent-platform',note:'Hannah. GATE 1 deliverable.',owner:'Hannah'},
+  {label:'Engagement Layer (continued)',start:'2026-03-23',end:'2026-05-15',color:'--accent-platform',note:'Angie\u2019s Agent Platform pod. MVP done, extending for multi-channel.',owner:'Angie pod'},
+  {label:'Context Engine + State Aggregation',start:'2026-04-07',end:'2026-05-15',color:'--accent-platform',note:'Patient/workflow context for decision-making.',owner:'Sergei'},
+  {label:'Agent Invocation & Execution',start:'2026-04-14',end:'2026-05-22',color:'--accent-platform',note:'Sync/async agent invocation.',owner:'SparkOS eng'},
+  {label:'Decision Engine v1 (Heuristic)',start:'2026-04-21',end:'2026-06-05',color:'--accent-platform',note:'Core SparkOS intelligence. Value/cost/probability.',owner:'SparkOS eng'},
+  {label:'Task Engine (Temporal)',start:'2026-04-14',end:'2026-05-29',color:'--accent-platform',note:'Long-running orchestration.',owner:'Matt'},
+  {label:'Staff Escalation & Triage v1',start:'2026-05-04',end:'2026-06-05',color:'--accent-platform',note:'Human-in-the-loop queue.',owner:'SparkOS eng'},
+  {label:'Outcome System (Defn + Lifecycle)',start:'2026-05-11',end:'2026-06-12',color:'--accent-platform',note:'Outcome definitions, tracking, success criteria.',owner:'SparkOS eng'},
+  {label:'Decision Logging & Observability',start:'2026-05-18',end:'2026-06-19',color:'--accent-platform',note:'Debug, monitor, explain.',owner:'SparkOS eng'},
+  {label:'Simulation Mode',start:'2026-05-11',end:'2026-06-05',color:'--accent-platform',note:'Dry-run before live.',owner:'Roger'},
+  {label:'Universal SparkOS Chat',start:'2026-06-01',end:'2026-06-26',color:'--accent-platform',note:'Context-aware chat.',owner:'SparkOS eng'},
+  {label:'Outcome Dashboards',start:'2026-06-15',end:'2026-07-10',color:'--accent-platform',note:'Metrics, ROI, run tracking.',owner:'SparkOS eng'},
+  {label:'Auth + Permissions',start:'2026-04-14',end:'2026-05-08',color:'--accent-platform',note:'Security: auth, RBAC.',owner:'Roger'},
+  {label:'Security Stack',start:'2026-04-21',end:'2026-06-12',color:'--accent-platform',note:'Policy engine, IdP, sandboxing.',owner:'SparkOS eng'},
+
+  {type:'group',label:'BILLING / CREDITS'},
+  {label:'Credit Metering Design',start:'2026-04-14',end:'2026-05-01',color:'--accent-billing',note:'Hannah owns requirements.',owner:'Hannah'},
+  {label:'Credit Metering Build',start:'2026-05-04',end:'2026-06-12',color:'--accent-billing',note:'Mission eng via VP of Eng.',owner:'TBD eng'},
+  {label:'Usage Dashboard',start:'2026-06-15',end:'2026-07-03',color:'--accent-billing',note:'Customer-facing credit visibility.',owner:''},
+  {label:'Pricing Lock',start:'2026-05-18',end:'2026-06-19',color:'--accent-billing',note:'Hannah + Michael.',owner:'Hannah'},
+
+  {type:'group',label:'AGENTS — STANDALONE (Phase 1)'},
+  {label:'Intake Follow-up MVP',start:'2026-04-07',end:'2026-04-24',color:'--accent-agent',note:'Hannah. First agent live. 3 customers.',owner:'Hannah'},
+  {label:'Scheduling Agent',start:'2026-04-14',end:'2026-05-29',color:'--accent-agent',note:'Hwee Min or Angie (TBD). All 3 Jobs.',owner:'TBD'},
+  {label:'Recapture Qual Agent',start:'2026-04-21',end:'2026-05-22',color:'--accent-agent',note:'Hwee Min. Job 1 only.',owner:'Hwee Min'},
+  {label:'Referral Qual Agent',start:'2026-04-28',end:'2026-06-05',color:'--accent-agent',note:'Angie. Job 2.',owner:'Angie'},
+  {label:'Insurance Agent',start:'2026-04-28',end:'2026-06-05',color:'--accent-agent',note:'Jack. Job 3.',owner:'Jack'},
+  {label:'Prior Auth Agent',start:'2026-05-11',end:'2026-06-19',color:'--accent-agent',note:'Jack or Angie (TBD). Shared Jobs 2+3. Latest standalone.',owner:'TBD'},
+  {label:'Procedure Qual Agent',start:'2026-05-18',end:'2026-06-19',color:'--accent-agent',note:'Jack. Job 3.',owner:'Jack'},
+  {label:'Intake Forms Agent',start:'2026-04-07',end:'2026-05-15',color:'--accent-agent',note:'Jack. Extends MVP. Job 3.',owner:'Jack'},
+
+  {type:'group',label:'AGENTS — SPARKOS COMPAT (Phase 2)'},
+  {label:'Intake Forms → SparkOS',start:'2026-05-18',end:'2026-06-05',color:'--accent-p2',note:'First agent compat.',striped:true,owner:'Jack'},
+  {label:'Scheduling → SparkOS',start:'2026-06-01',end:'2026-06-19',color:'--accent-p2',note:'All 3 Jobs need this.',striped:true,owner:'TBD'},
+  {label:'Recapture Qual → SparkOS',start:'2026-05-25',end:'2026-06-12',color:'--accent-p2',note:'',striped:true,owner:'Hwee Min'},
+  {label:'Referral Qual → SparkOS',start:'2026-06-08',end:'2026-06-26',color:'--accent-p2',note:'',striped:true,owner:'Angie'},
+  {label:'Insurance → SparkOS',start:'2026-06-08',end:'2026-06-26',color:'--accent-p2',note:'',striped:true,owner:'Jack'},
+  {label:'Prior Auth → SparkOS',start:'2026-06-22',end:'2026-07-03',color:'--accent-p2',note:'Latest P2 deadline. Jobs 2+3.',striped:true,owner:'TBD'},
+  {label:'Procedure Qual → SparkOS',start:'2026-06-22',end:'2026-07-03',color:'--accent-p2',note:'',striped:true,owner:'Jack'},
+
+  {type:'group',label:'CONDUCTORS (In SparkOS Core)'},
+  {label:'Recapture Conductor (Job 1)',start:'2026-06-08',end:'2026-06-26',color:'--accent-recapture',note:'Built in SparkOS. Hannah + eng.',owner:'Hannah'},
+  {label:'Job 1: Integration Testing',start:'2026-06-29',end:'2026-07-10',color:'--accent-recapture',note:'E2E with Scheduling, Recapture Qual.',owner:'Hannah + Hwee Min'},
+  {label:'Referral Conductor (Job 2)',start:'2026-06-15',end:'2026-07-03',color:'--accent-referral',note:'Built in SparkOS. Hannah + eng.',owner:'Hannah'},
+  {label:'Job 2: Integration Testing',start:'2026-07-06',end:'2026-07-17',color:'--accent-referral',note:'E2E with Referral Qual, Prior Auth, Scheduling.',owner:'Hannah + Angie'},
+  {label:'Patient Ready Conductor (Job 3)',start:'2026-06-15',end:'2026-07-03',color:'--accent-readiness',note:'Built in SparkOS. Hannah + eng.',owner:'Hannah'},
+  {label:'Job 3: Integration Testing',start:'2026-07-06',end:'2026-07-17',color:'--accent-readiness',note:'E2E with Insurance, Proc Qual, Intake Forms, Scheduling.',owner:'Hannah + Jack'},
+
+  {type:'group',label:'GTM / MIGRATION / LAUNCH'},
+  {label:'Sales Enablement',start:'2026-05-18',end:'2026-06-19',color:'--accent-gtm',note:'Training, demos, pricing.',owner:'Hannah + PMM'},
+  {label:'EA Pilot',start:'2026-06-15',end:'2026-07-10',color:'--accent-gtm',note:'Early access customers validate.',owner:'Hannah'},
+  {label:'Classic ↔ SparkOS Toggle',start:'2026-06-01',end:'2026-06-26',color:'--accent-gtm',note:'Salesforce-style coexistence.',owner:'Sofia'},
+  {label:'Migration Tooling',start:'2026-06-15',end:'2026-07-10',color:'--accent-gtm',note:'Scripts, comms, rollback.',owner:'Hannah'},
+  {label:'GA Launch Prep & QA',start:'2026-07-06',end:'2026-07-17',color:'--accent-gtm',note:'Final QA, load testing.',owner:'Hannah + EM'},
+
+  {type:'group',label:'GATES & MILESTONES'},
+  {type:'ms',label:'Gate 1: MVP Live + Contract Lock',date:'2026-04-25',color:'--accent-milestone'},
+  {type:'ms',label:'Gate 2: First Agents Sellable',date:'2026-05-22',color:'--accent-milestone'},
+  {type:'ms',label:'Gate 3: Platform + Credits Ready',date:'2026-06-12',color:'--accent-milestone'},
+  {type:'ms',label:'Gate 4: All Agents Compat + EA',date:'2026-07-03',color:'--accent-milestone'},
+  {type:'ms',label:'🚀 Gate 5: SparkOS GA',date:'2026-07-17',color:'--accent-milestone'},
+];
+
+const chartEl=document.getElementById('chart'),labelsEl=document.getElementById('labels');
+let headerHTML='<div class="timeline-hdr">';
+const months={};
+weeks.forEach(w=>{const k=w.toLocaleString('en-US',{month:'short',year:'numeric'});if(!months[k])months[k]=[];months[k].push(w)});
+for(const[m,ws]of Object.entries(months)){
+  headerHTML+=`<div class="month-grp" style="width:${ws.length*CW}px"><div class="month-lbl">${m}</div><div class="week-lbls">`;
+  ws.forEach(w=>{headerHTML+=`<div class="week-cell">${fmt(w)}</div>`});
+  headerHTML+='</div></div>';
+}
+headerHTML+='</div>';
+labelsEl.innerHTML='<div class="label-hdr">Work Item</div>';
+
+let chartRows='',labelRows='';
+data.forEach(item=>{
+  if(item.type==='group'){
+    labelRows+=`<div class="grp-hdr">${item.label}</div>`;
+    chartRows+=`<div class="grp-hdr-chart" style="width:${TW}px"></div>`;
+    return;
+  }
+  let extra='';
+  if(item.striped)extra='<span class="tag" style="background:rgba(86,211,100,.12);color:var(--accent-p2)">P2</span>';
+  if(item.owner&&item.owner.includes('TBD'))extra+='<span class="tag" style="background:rgba(247,129,102,.12);color:var(--accent-recapture)">TBD</span>';
+  labelRows+=`<div class="row-lbl">${item.label}${extra}</div>`;
+
+  if(item.type==='ms'){
+    const dt=new Date(item.date+'T00:00:00'),left=bL(dt);
+    chartRows+=`<div class="chart-row" style="width:${TW}px">`;
+    weeks.forEach(()=>{chartRows+=`<div class="chart-cell"></div>`});
+    chartRows+=`<div class="ms-marker" style="left:${left-11}px;background:var(${item.color})"></div>`;
+    chartRows+=`<div class="ms-text" style="left:${left+16}px;color:var(${item.color})">${fmt(dt)}</div>`;
+    chartRows+='</div>';
+  } else {
+    const s=new Date(item.start+'T00:00:00'),e=new Date(item.end+'T00:00:00');
+    const left=bL(s),width=bW(s,e),cls=item.striped?'bar striped':'bar';
+    chartRows+=`<div class="chart-row" style="width:${TW}px">`;
+    weeks.forEach(()=>{chartRows+=`<div class="chart-cell"></div>`});
+    const ownerTxt=item.owner?` · ${item.owner}`:'';
+    chartRows+=`<div class="${cls}" style="left:${left}px;width:${Math.max(width,8)}px;background:var(${item.color})"
+      data-title="${item.label}" data-dates="${fmt(s)} → ${fmt(e)}${ownerTxt}" data-note="${item.note||''}"
+    >${width>75?item.label:''}</div>`;
+    chartRows+='</div>';
+  }
+});
+
+const todayLeft=bL(TODAY);
+chartEl.innerHTML=headerHTML+`<div style="position:relative">`+
+  `<div class="today-line" style="left:${todayLeft}px"><div class="today-lbl">TODAY 4/10</div></div>`+
+  chartRows+`</div>`;
+labelsEl.innerHTML+=labelRows;
+
+const tooltip=document.getElementById('tooltip');
+document.querySelectorAll('.bar').forEach(bar=>{
+  bar.addEventListener('mouseenter',()=>{
+    tooltip.innerHTML=`<div class="tt-t">${bar.dataset.title}</div><div class="tt-d">${bar.dataset.dates}</div>${bar.dataset.note?`<div class="tt-n">${bar.dataset.note}</div>`:''}`;
+    tooltip.style.display='block';
+  });
+  bar.addEventListener('mousemove',e=>{tooltip.style.left=(e.clientX+12)+'px';tooltip.style.top=(e.clientY-10)+'px'});
+  bar.addEventListener('mouseleave',()=>{tooltip.style.display='none'});
+});
+</script>
+</body>
+</html>
