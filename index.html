@@ -47,7 +47,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;ove
 <body>
 <div class="header">
 <h1>SparkOS Summer Release — Master Gantt</h1>
-<div class="sub">April 15 → July 17, 2026 · 7 Agents + 3 Conductors (in SparkOS) · 5 Milestones · Today: Apr 15</div>
+<div class="sub">April 16 → July 17, 2026 · 7 Agents + 3 Conductors (in SparkOS) · 5 Milestones · Today: Apr 16</div>
 <div class="legend">
 <div class="legend-item"><div class="legend-dot" style="background:var(--accent-platform)"></div>Platform</div>
 <div class="legend-item"><div class="legend-dot" style="background:var(--accent-agent)"></div>Agents (Standalone)</div>
@@ -66,7 +66,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;ove
 <div class="chart" id="chart"></div>
 </div>
 <script>
-const START=new Date(2026,3,6),END=new Date(2026,6,20),CW=52,TODAY=new Date(2026,3,15);
+const START=new Date(2026,3,6),END=new Date(2026,6,20),CW=52,TODAY=new Date(2026,3,16);
 const weeks=[];let d=new Date(START);while(d<END){weeks.push(new Date(d));d.setDate(d.getDate()+7)}
 const TW=weeks.length*CW;
 function wi(dt){return(dt.getTime()-START.getTime())/(7*864e5)}
@@ -105,6 +105,8 @@ const data=[
 {label:'Prior Auth Agent',start:'2026-05-11',end:'2026-06-19',color:'--accent-agent',note:'Jack/Angie TBD. Jobs 2+3.'},
 {label:'Procedure Qual Agent',start:'2026-05-18',end:'2026-06-19',color:'--accent-agent',note:'Jack. Job 3.'},
 {label:'Intake Forms Agent',start:'2026-04-07',end:'2026-05-15',color:'--accent-agent',note:'Jack. Extends MVP.'},
+{type:'group',label:'AGENTS \u2014 COMPATIBLE WITH WFB (P1.5)'},
+{type:'nodates',label:'Each agent needs to become compat with WFB (~3 days ea)',note:'??'},
 {type:'group',label:'AGENTS \u2014 SPARKOS COMPAT (P2)'},
 {label:'Intake Forms \u2192 SparkOS',start:'2026-05-18',end:'2026-06-05',color:'--accent-p2',note:'',striped:true},
 {label:'Scheduling \u2192 SparkOS',start:'2026-06-01',end:'2026-06-19',color:'--accent-p2',note:'All 3 Jobs.',striped:true},
@@ -132,6 +134,7 @@ const data=[
 {type:'ms',label:'\u25C6 Platform Ready',date:'2026-06-12',color:'--accent-milestone',note:'MILESTONE 3'},
 {type:'ms',label:'\u25C6 All Agents Compat + EA',date:'2026-07-03',color:'--accent-milestone',note:'MILESTONE 4'},
 {type:'ms',label:'\uD83D\uDE80 SPARKOS GA',date:'2026-07-17',color:'--accent-milestone',note:'MILESTONE 5'},
+{type:'nodates',label:'Beta: Create your own Job',note:''},
 ];
 const chartEl=document.getElementById('chart'),labelsEl=document.getElementById('labels');
 let headerHTML='<div class="timeline-hdr">';
@@ -185,7 +188,7 @@ chartRows+='</div>';
 });
 const todayLeft=bL(TODAY);
 chartEl.innerHTML=headerHTML+`<div style="position:relative">`+
-`<div class="today-line" style="left:${todayLeft}px"><div class="today-lbl">TODAY 4/15</div></div>`+
+`<div class="today-line" style="left:${todayLeft}px"><div class="today-lbl">TODAY 4/16</div></div>`+
 chartRows+`</div>`;
 labelsEl.innerHTML+=labelRows;
 const tooltip=document.getElementById('tooltip');
