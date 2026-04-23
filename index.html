@@ -6,7 +6,7 @@
 <title>SparkOS Summer Release — Gantt</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2129;--border:#30363d;--text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--accent-recapture:#f78166;--accent-referral:#79c0ff;--accent-readiness:#a5d6ff;--accent-platform:#7ee787;--accent-billing:#d2a8ff;--accent-agent:#ffa657;--accent-milestone:#f0e68c;--accent-gtm:#ff7b72;--accent-p2:#56d364;--today:#e03c31;--grid-line:rgba(48,54,61,0.6)}
+:root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2129;--border:#30363d;--text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--accent-recapture:#f78166;--accent-referral:#79c0ff;--accent-readiness:#a5d6ff;--accent-platform:#7ee787;--accent-billing:#d2a8ff;--accent-agent:#ffa657;--accent-milestone:#f0e68c;--accent-gtm:#ff7b72;--accent-p2:#56d364;--accent-wfb:#ffc658;--today:#e03c31;--grid-line:rgba(48,54,61,0.6)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:auto;min-height:100vh}
 .header{padding:28px 36px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:100}
@@ -16,7 +16,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;ove
 .legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-muted);font-weight:500}
 .legend-dot{width:9px;height:9px;border-radius:2px}
 .gantt-wrap{display:flex;min-width:100%}
-.labels{min-width:320px;max-width:320px;flex-shrink:0;position:sticky;left:0;z-index:50;background:var(--bg);border-right:1px solid var(--border)}
+.labels{min-width:340px;max-width:340px;flex-shrink:0;position:sticky;left:0;z-index:50;background:var(--bg);border-right:1px solid var(--border)}
 .label-hdr{height:52px;display:flex;align-items:flex-end;padding:0 14px 7px;font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);background:var(--bg);z-index:60}
 .chart{flex:1;overflow-x:auto}
 .timeline-hdr{display:flex;height:52px;border-bottom:1px solid var(--border);background:var(--bg);z-index:40}
@@ -47,10 +47,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;ove
 <body>
 <div class="header">
 <h1>SparkOS Summer Release — Master Gantt</h1>
-<div class="sub">April 22 → July 17, 2026 · 7 Agents + 3 Conductors (in SparkOS) · 5 Milestones · Today: Apr 22</div>
+<div class="sub">April 23 → July 17, 2026 · 7 Agents + 3 Conductors (in SparkOS) · 5 Milestones · Today: Apr 23</div>
 <div class="legend">
 <div class="legend-item"><div class="legend-dot" style="background:var(--accent-platform)"></div>Platform</div>
 <div class="legend-item"><div class="legend-dot" style="background:var(--accent-agent)"></div>Agents (Standalone)</div>
+<div class="legend-item"><div class="legend-dot" style="background:var(--accent-wfb)"></div>Agents (WFB P1.5)</div>
 <div class="legend-item"><div class="legend-dot" style="background:var(--accent-p2)"></div>Agents (SparkOS P2)</div>
 <div class="legend-item"><div class="legend-dot" style="background:var(--accent-recapture)"></div>Job 1</div>
 <div class="legend-item"><div class="legend-dot" style="background:var(--accent-referral)"></div>Job 2</div>
@@ -66,7 +67,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;ove
 <div class="chart" id="chart"></div>
 </div>
 <script>
-const START=new Date(2026,3,6),END=new Date(2026,6,20),CW=52,TODAY=new Date(2026,3,22);
+const START=new Date(2026,3,6),END=new Date(2026,6,20),CW=52,TODAY=new Date(2026,3,23);
 const weeks=[];let d=new Date(START);while(d<END){weeks.push(new Date(d));d.setDate(d.getDate()+7)}
 const TW=weeks.length*CW;
 function wi(dt){return(dt.getTime()-START.getTime())/(7*864e5)}
@@ -74,6 +75,7 @@ function bL(dt){return wi(dt)*CW}
 function bW(s,e){return(wi(e)-wi(s))*CW}
 function fmt(dt){return(dt.getMonth()+1)+'/'+dt.getDate()}
 const data=[
+// PLATFORM
 {type:'group',label:'SPARKOS PLATFORM (CORE)'},
 {label:'Agent Contract & Registration v1',start:'2026-04-07',end:'2026-04-25',color:'--accent-platform',note:'Hannah. MILESTONE 1.'},
 {label:'Engagement Layer (continued)',start:'2026-03-23',end:'2026-05-15',color:'--accent-platform',note:'Angie pod. MVP done.'},
@@ -91,22 +93,29 @@ const data=[
 {label:'Outcome Dashboards',start:'2026-06-15',end:'2026-07-10',color:'--accent-platform',note:''},
 {label:'Auth + Permissions',start:'2026-04-14',end:'2026-05-08',color:'--accent-platform',note:''},
 {label:'Security Stack',start:'2026-04-21',end:'2026-06-12',color:'--accent-platform',note:''},
+// BILLING
 {type:'group',label:'BILLING / CREDITS'},
 {label:'Credit Metering Design',start:'2026-04-14',end:'2026-05-01',color:'--accent-billing',note:'Hannah + Sofia'},
 {label:'Credit Metering Build',start:'2026-05-04',end:'2026-06-12',color:'--accent-billing',note:'Eng TBD.'},
 {label:'Usage Dashboard',start:'2026-06-15',end:'2026-07-03',color:'--accent-billing',note:''},
 {label:'Pricing Lock',start:'2026-05-18',end:'2026-06-19',color:'--accent-billing',note:''},
+// AGENTS P1
 {type:'group',label:'AGENTS \u2014 STANDALONE (P1)'},
-{label:'Intake Follow-up MVP (incl. testing/refinement)',start:'2026-04-07',end:'2026-04-24',color:'--accent-agent',note:'Hannah. 3 customers.'},
-{label:'Scheduling Agent',start:'2026-04-14',end:'2026-05-29',color:'--accent-agent',note:'Ruben + Angie. Jobs 1, 2, 3'},
-{label:'Recapture Qual Agent',start:'2026-04-21',end:'2026-05-22',color:'--accent-agent',note:'Hwee Min. Job 1.'},
-{label:'Referral Qual Agent',start:'2026-04-28',end:'2026-06-05',color:'--accent-agent',note:'Felipe + Angie'},
-{label:'Insurance Agent',start:'2026-04-28',end:'2026-06-05',color:'--accent-agent',note:'Jack. Job 3.'},
-{label:'Prior Auth Agent',start:'2026-05-11',end:'2026-06-19',color:'--accent-agent',note:'Jack/Angie TBD. Jobs 2+3.'},
-{label:'Procedure Qual Agent',start:'2026-05-18',end:'2026-06-19',color:'--accent-agent',note:'Jack. Job 3.'},
-{label:'Intake Forms Agent',start:'2026-04-07',end:'2026-05-15',color:'--accent-agent',note:'Jack. Extends MVP.'},
+{label:'Outreach Agent',start:'2026-04-07',end:'2026-04-24',color:'--accent-agent',note:'Hannah. 3 customers.'},
+{label:'Scheduling Agent',start:'2026-04-14',end:'2026-04-25',color:'--accent-agent',note:'Ruben + Angie. Jobs 1, 2, 3'},
+{label:'Rescheduling Agent',start:'2026-04-14',end:'2026-04-25',color:'--accent-agent',note:'Hwee Min. Job 1.'},
+{label:'Referral Management Agent',start:'2026-04-14',end:'2026-04-25',color:'--accent-agent',note:'Felipe + Angie'},
+{label:'Document Agent',start:'2026-04-14',end:'2026-05-01',color:'--accent-agent',note:''},
+{label:'Referral Management Agent (basic)',start:'2026-04-14',end:'2026-04-25',color:'--accent-agent',note:''},
+{label:'Referral Management Agent (advanced)',start:'2026-04-25',end:'2026-05-08',color:'--accent-agent',note:'Jack. Job 3.'},
+{label:'Appointment Management Agent',start:'2026-04-14',end:'2026-05-08',color:'--accent-agent',note:''},
+{label:'Recall Agent',start:'2026-04-14',end:'2026-04-25',color:'--accent-agent',note:''},
+{label:'Intake Agent',start:'2026-04-07',end:'2026-05-15',color:'--accent-agent',note:'Jack. Extends MVP.'},
+{label:'Eligibility Agent',start:'2026-04-07',end:'2026-05-15',color:'--accent-agent',note:''},
+// WFB P1.5
 {type:'group',label:'AGENTS \u2014 COMPATIBLE WITH WFB (P1.5)'},
-{type:'nodates',label:'Each agent needs to become compat with WFB (~3 days ea)',note:'??'},
+{label:'Each agent needs to become compat with WFB',start:'2026-04-13',end:'2026-04-24',color:'--accent-wfb',note:''},
+// SPARKOS P2
 {type:'group',label:'AGENTS \u2014 SPARKOS COMPAT (P2)'},
 {label:'Intake Forms \u2192 SparkOS',start:'2026-05-18',end:'2026-06-05',color:'--accent-p2',note:'',striped:true},
 {label:'Scheduling \u2192 SparkOS',start:'2026-06-01',end:'2026-06-19',color:'--accent-p2',note:'All 3 Jobs.',striped:true},
@@ -115,6 +124,7 @@ const data=[
 {label:'Insurance \u2192 SparkOS',start:'2026-06-08',end:'2026-06-26',color:'--accent-p2',note:'',striped:true},
 {label:'Prior Auth \u2192 SparkOS',start:'2026-06-22',end:'2026-07-03',color:'--accent-p2',note:'Latest deadline.',striped:true},
 {label:'Procedure Qual \u2192 SparkOS',start:'2026-06-22',end:'2026-07-03',color:'--accent-p2',note:'',striped:true},
+// CONDUCTORS
 {type:'group',label:'CONDUCTORS (In SparkOS Core)'},
 {label:'Recapture Conductor (Job 1)',start:'2026-06-08',end:'2026-06-26',color:'--accent-recapture',note:'Hannah + eng.'},
 {label:'Job 1: Integration Testing',start:'2026-06-29',end:'2026-07-10',color:'--accent-recapture',note:''},
@@ -122,19 +132,20 @@ const data=[
 {label:'Job 2: Integration Testing',start:'2026-07-06',end:'2026-07-17',color:'--accent-referral',note:''},
 {label:'Patient Ready Conductor (Job 3)',start:'2026-06-15',end:'2026-07-03',color:'--accent-readiness',note:'Hannah + eng.'},
 {label:'Job 3: Integration Testing',start:'2026-07-06',end:'2026-07-17',color:'--accent-readiness',note:''},
+// GTM
 {type:'group',label:'GTM / MIGRATION / LAUNCH'},
 {label:'Sales Enablement',start:'2026-05-18',end:'2026-06-19',color:'--accent-gtm',note:''},
 {label:'EA Pilot',start:'2026-06-15',end:'2026-07-10',color:'--accent-gtm',note:''},
-{label:'Classic/SparkOS Toggle',start:'2026-06-01',end:'2026-06-26',color:'--accent-gtm',note:'Sofia.'},
+{label:'Foundational Platform/SparkOS Toggle',start:'2026-06-01',end:'2026-06-26',color:'--accent-gtm',note:'Sofia.'},
 {label:'Migration Tooling',start:'2026-06-15',end:'2026-07-10',color:'--accent-gtm',note:''},
 {label:'GA Launch Prep & QA',start:'2026-07-06',end:'2026-07-17',color:'--accent-gtm',note:''},
+// MILESTONES
 {type:'group',label:'MILESTONES'},
 {type:'ms',label:'\u25C6 MVP Live + Contract Lock',date:'2026-04-25',color:'--accent-milestone',note:'MILESTONE 1'},
 {type:'ms',label:'\u25C6 First Agents Sellable',date:'2026-05-22',color:'--accent-milestone',note:'MILESTONE 2'},
 {type:'ms',label:'\u25C6 Platform Ready',date:'2026-06-12',color:'--accent-milestone',note:'MILESTONE 3'},
 {type:'ms',label:'\u25C6 All Agents Compat + EA',date:'2026-07-03',color:'--accent-milestone',note:'MILESTONE 4'},
 {type:'ms',label:'\uD83D\uDE80 SPARKOS GA',date:'2026-07-17',color:'--accent-milestone',note:'MILESTONE 5'},
-{type:'nodates',label:'Beta: Create your own Job',note:''},
 ];
 const chartEl=document.getElementById('chart'),labelsEl=document.getElementById('labels');
 let headerHTML='<div class="timeline-hdr">';
@@ -188,7 +199,7 @@ chartRows+='</div>';
 });
 const todayLeft=bL(TODAY);
 chartEl.innerHTML=headerHTML+`<div style="position:relative">`+
-`<div class="today-line" style="left:${todayLeft}px"><div class="today-lbl">TODAY 4/22</div></div>`+
+`<div class="today-line" style="left:${todayLeft}px"><div class="today-lbl">TODAY 4/23</div></div>`+
 chartRows+`</div>`;
 labelsEl.innerHTML+=labelRows;
 const tooltip=document.getElementById('tooltip');
